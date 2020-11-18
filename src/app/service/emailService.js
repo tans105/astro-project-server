@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 module.exports = {
-    sendEmail: function (data) {
+    sendEmail: function (req, res, cb) {
         const transporter = nodemailer.createTransport({
                 service: 'yahoo',
                 auth: {
@@ -9,6 +9,7 @@ module.exports = {
                     pass: 'kictppfrqtlrfjwi'
                 }
             }),
+            data = req.body,
             email = data['email'],
             primary = data['primary'],
             secondary = data['secondary'],
@@ -100,9 +101,9 @@ module.exports = {
 
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-                console.log(error);
+                cb({success: false, msg: 'Failed to send email ' + error}, res);
             } else {
-                res.status(201).send({message: 'Updated successfully ' + info.message});
+                cb({success: true, msg: 'Updated successfully ' + info.message}, res);
             }
         });
     }

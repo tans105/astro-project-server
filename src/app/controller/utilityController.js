@@ -1,14 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-
-express().use(cors());
-express().options('*', cors());
-express().use(bodyParser.urlencoded({extended: true}));
-express().use(bodyParser.json());
-express().use(bodyParser.raw());
 
 router.get('/', (req, res) => {
     res.send('Hello World!')

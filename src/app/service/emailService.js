@@ -106,8 +106,8 @@ module.exports = {
 
         const mailOptions = {
             from: 'tanmayawasthi105@yahoo.com',
-            to: 'tanmayawasthi105@yahoo.com',
-            // cc: 'tanmayawasthi105@yahoo.com',
+            to: 'sandhya_awasthi2005@yahoo.co.in',
+            cc: 'tanmayawasthi105@yahoo.com',
             subject: `AstroPundit - New Query - ${data['fname']}`,
             html: template
         };

@@ -113,7 +113,7 @@ function getFeedbackTemplate(data) {
         name = data['name'],
         feedback = data['feedback'];
 
-    let subject = 'FeedbackModel Recieved !'
+    let subject = 'Feedback Recieved !'
     let body = `
     <!DOCTYPE html>
     <html>

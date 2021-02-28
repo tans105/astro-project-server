@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
 
-app.use('/api', require('./src/app/controller/utilityController'));
+app.use('/api', require('./src/app/controller/utility.controller'));
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`)

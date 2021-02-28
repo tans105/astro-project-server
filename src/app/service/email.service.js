@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
-const common = require('./common')
-const templateService = require('./templateService')
+const common = require('../utils/common')
+const templateService = require('./template.service')
 
 module.exports = {
     sendEmail: function (req, res, cb) {

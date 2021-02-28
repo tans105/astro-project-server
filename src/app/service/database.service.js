@@ -10,17 +10,19 @@ module.exports = {
         }
 
         if (type && type === 'query') {
-            let status = db.storeQuery(data);
+            db.storeQuery(data).then((dbResponse) => {
+                const status = dbResponse.success;
 
-            if (status) {
-                cb(true);
-            } else {
-                response.msg = 'Not able to store in the database, check configuration';
-                response.success = false;
-                cb(response);
-            }
+                if (status) {
+                    cb(dbResponse);
+                } else {
+                    response.msg = 'Not able to store in the database, check configuration';
+                    response.success = false;
+                    cb(dbResponse);
+                }
+            });
         } else {
-            cb(true); //Type feedback, just send Email
+            cb(response); //Type feedback, just send Email
         }
     }
 }

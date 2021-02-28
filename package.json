@@ -22,7 +22,7 @@
     "body-parser": "latest",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "mongoose": "^5.11.18",
+    "mongodb": "^3.6.4",
     "nodemailer": "^6.4.11"
   },
   "devDependencies": {

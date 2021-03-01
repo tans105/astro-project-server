@@ -1,11 +1,20 @@
 const parseUtil = require('../utils/parse.util')
 const common = require('../utils/common')
+const {Client} = require('pg');
 
-let MongoClient = require('mongodb').MongoClient;
+const dbConfig = getDbConfig();
+const client = new Client({
+    user: dbConfig.user,
+    host: dbConfig.host,
+    database: dbConfig.database,
+    port: dbConfig.port,
+});
 
-function getDbUrl() {
+client.connect();
+
+function getDbConfig() {
     const config = common.config();
-    return config.db.url;
+    return config.db;
 }
 
 module.exports = {
@@ -14,20 +23,19 @@ module.exports = {
             let response = {}
             let query = parseUtil.parse(data);
             if (query.success) {
-                MongoClient.connect(getDbUrl(), function (err, db) {
-                    if (err) throw err;
-                    let dbo = db.db("mb");
-                    dbo.collection("queries").insertOne({query}, (err, result) => {
-                        if (err) {
-                            response.success = false;
-                            response.message = err;
-                            db.close().then(r => console.log('Connection closed !'));
-                        } else {
-                            response.success = true;
-                            response.message = result;
-                        }
-                        resolve(response);
-                    });
+                const toBeInsertedQuery = `INSERT INTO queries (email, query) VALUES ($1::text, $2::text)`;
+                client.query(toBeInsertedQuery, [query.email, JSON.stringify(query)], (err, res) => {
+                    if (err) {
+                        response.success = false;
+                        response.error = err;
+                        return;
+                    } else {
+                        response.success = true;
+                        response.message = res;
+                        client.end();
+                    }
+
+                    resolve(response)
                 });
             }
         });

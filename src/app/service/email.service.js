@@ -30,7 +30,6 @@ module.exports = {
         const mailOptions = {
             from: emailConfig.from,
             to: emailConfig.to,
-            cc: (emailConfig.cc && emailConfig.cc.length > 0) ? emailConfig.cc[0] : null,
             subject: emailPayload.subject,
             html: emailPayload.body
         };

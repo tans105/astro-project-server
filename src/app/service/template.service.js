@@ -30,7 +30,7 @@ function getQueryTemplate(data) {
         quesTpl += `<li>${JSON.stringify(question)}</li>`
     });
 
-    let subject = `AstroPundit - New Query - ${fname}`;
+    let subject = `MangalamBhav - New Query - ${fname}`;
     let body = `
     <!DOCTYPE html>
     <html>

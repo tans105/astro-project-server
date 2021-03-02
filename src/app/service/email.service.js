@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
-const common = require('./common')
-const templateService = require('./templateService')
+const common = require('../utils/common')
+const templateService = require('./template.service')
 
 module.exports = {
     sendEmail: function (req, res, cb) {
@@ -30,7 +30,6 @@ module.exports = {
         const mailOptions = {
             from: emailConfig.from,
             to: emailConfig.to,
-            cc: (emailConfig.cc && emailConfig.cc.length > 0) ? emailConfig.cc[0] : null,
             subject: emailPayload.subject,
             html: emailPayload.body
         };

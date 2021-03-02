@@ -1,3 +1,5 @@
+const parseUtil = require('../utils/parse.util');
+
 module.exports = {
     getTemplate: (data) => {
         const type = data['emailType'];
@@ -10,23 +12,25 @@ module.exports = {
 }
 
 function getQueryTemplate(data) {
-    const email = data['email'],
-        primary = data['primary'],
-        secondary = data['secondary'],
-        latitude = data['latitude'],
-        longitude = data['longitude'],
-        dob = JSON.stringify(data['dob']),
-        pob = data['pob'],
-        tob = JSON.stringify(data['tob']),
-        fname = data['fname'],
-        questions = data['questions'];
+    const {
+        email,
+        primary,
+        secondary,
+        latitude,
+        longitude,
+        dob,
+        pob,
+        tob,
+        fname,
+        questions
+    } = parseUtil.parse(data);
 
     let quesTpl = '';
     questions.forEach((question) => {
         quesTpl += `<li>${JSON.stringify(question)}</li>`
     });
 
-    let subject = `AstroPundit - New Query - ${fname}`;
+    let subject = `MangalamBhav - New Query - ${fname}`;
     let body = `
     <!DOCTYPE html>
     <html>

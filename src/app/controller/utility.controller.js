@@ -26,11 +26,12 @@ router.post('/sendEmail', function (req, res) {
 function emailCallback(email, res) {
     if (email && email.success) {
         logger.log('Email sent success');
-        res.status(200).json({status: "ok"})
+        res.writeHead(200)
     } else {
         logger.log('Failed to send email');
-        res.status(500).send(email.msg);
+        res.writeHead(500)
     }
+    res.end(email)
 }
 
 module.exports = router;

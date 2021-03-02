@@ -16,6 +16,8 @@ module.exports = {
                     dbResponse.success = false;
                     cb(dbResponse);
                 }
+            }, (err) => {
+                console.log(err);
             });
         } else {
             cb({success: true}); //Type feedback, just send Email

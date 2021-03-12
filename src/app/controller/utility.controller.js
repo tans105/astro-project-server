@@ -2,6 +2,7 @@ const express = require('express');
 const emailService = require('../service/email.service');
 const databaseService = require('../service/database.service');
 const logger = require('../service/logging.service');
+
 const router = express.Router();
 
 router.get('/health', (req, res) => {
@@ -25,11 +26,11 @@ router.post('/sendEmail', function (req, res) {
 
 function emailCallback(email, res) {
     if (email && email.success) {
-        logger.log('Email sent success');
-        res.writeHead(200)
+        logger.log('Email Sent');
+        res.status(200).json({status: "ok"})
     } else {
         logger.log('Failed to send email');
-        res.writeHead(500)
+        res.status(500).send(email.msg);
     }
     res.end(email)
 }

@@ -1,7 +1,12 @@
 const db = require('../dao/db');
+const featureService = require('../service/feature.service');
 
 module.exports = {
     store: (req, cb) => {
+        if(!featureService.isFeatureEnabled('database_integration')) {
+            cb({success: true});
+        }
+
         const data = req.body,
             type = data['emailType'];
 
@@ -24,6 +29,12 @@ module.exports = {
         }
     },
     seed: () => {
+        if(!featureService.isFeatureEnabled('database_integration')) {
+            return new Promise((resolve) => {
+                resolve({success: true});
+            });
+        }
+
         return db.seedData();
     }
 }

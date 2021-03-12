@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 8000;
 const dbService = require('./src/app/service/database.service')
+const featureService = require('./src/app/service/feature.service')
 const logger = require('./src/app/service/logging.service');
 
 app.use(cors());
@@ -13,6 +14,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.raw());
 
 app.use('/api', require('./src/app/controller/utility.controller'));
+
+featureService.bootstrap();
 
 dbService.seed().then((res) => {
     logger.log(res);

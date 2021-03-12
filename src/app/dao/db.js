@@ -2,6 +2,7 @@ const parseUtil = require('../utils/parse.util')
 const common = require('../utils/common')
 const {Client} = require('pg');
 const logger = require('../service/logging.service');
+const _ = require('lodash');
 
 const dbConfig = getDbConfig();
 const clientPayload = {
@@ -9,6 +10,7 @@ const clientPayload = {
     host: dbConfig.host,
     database: dbConfig.database,
     port: dbConfig.port,
+    ssl: _.get(dbConfig, 'ssl', false)
 }
 
 if (dbConfig.hasOwnProperty('password')) {
@@ -59,7 +61,7 @@ module.exports = {
             `;
             client.query(createQuery, (err, res) => {
                 if (err) {
-                    logger.log('Failed to create table '+ err.toString());
+                    logger.log('Failed to create table ' + err.toString());
                     response.success = false;
                     response.error = err;
                 } else {

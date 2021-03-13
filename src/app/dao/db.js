@@ -31,7 +31,7 @@ module.exports = {
             let response = {}
             let query = parseUtil.parse(data);
             if (query.success) {
-                const toBeInsertedQuery = `INSERT INTO queries (email, query) VALUES ($1::text, $2::text)`;
+                const toBeInsertedQuery = `INSERT INTO queries (email, query, creation_dtm) VALUES ($1::text, $2::text, now())`;
                 client.query(toBeInsertedQuery, [query.email, JSON.stringify(query)], (err, res) => {
                     if (err) {
                         logger.log('Failed to insert query ', err.toString())
@@ -56,7 +56,8 @@ module.exports = {
                             create TABLE IF NOT EXISTS queries (
                                       id serial,
                                       email character varying(100),
-                                      query text
+                                      query text,
+                                      creation_dtm timestamp without time zone default now()
                                     );
             `;
             client.query(createQuery, (err, res) => {

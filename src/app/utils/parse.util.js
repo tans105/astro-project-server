@@ -6,10 +6,9 @@ module.exports = {
                 email: data['email'],
                 primary: data['primary'],
                 secondary: data['secondary'],
-                latitude: data['latitude'],
-                longitude: data['longitude'],
                 dob: JSON.stringify(data['dob']),
                 pob: data['pob'],
+                sob: data['sob'],
                 tob: JSON.stringify(data['tob']),
                 fname: data['fname'],
                 questions: data['questions']

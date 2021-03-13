@@ -16,8 +16,7 @@ function getQueryTemplate(data) {
         email,
         primary,
         secondary,
-        latitude,
-        longitude,
+        sob,
         dob,
         pob,
         tob,
@@ -76,16 +75,12 @@ function getQueryTemplate(data) {
           <td>${secondary}</td>
         </tr>
         <tr>
-          <td>Place of Birth</td>
+          <td>City of Birth</td>
           <td>${pob}</td>
         </tr>
         <tr>
-          <td>Latitude</td>
-          <td>${latitude}</td>
-        </tr>
-        <tr>
-          <td>Longitude</td>
-          <td>${longitude}</td>
+          <td>State of Birth</td>
+          <td>${sob}</td>
         </tr>
         <tr>
           <td>Date of Birth</td>

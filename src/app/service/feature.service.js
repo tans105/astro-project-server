@@ -7,7 +7,7 @@ module.exports = {
     isFeatureEnabled: (code) => {
         return features[code];
     },
-    bootstrap: () => {
+    populateFeatureFlags: () => {
         features = _.get(common.config(), 'feature_flags', []);
     }
 }

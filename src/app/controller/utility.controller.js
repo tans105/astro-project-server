@@ -1,23 +1,23 @@
 const express = require('express');
-const emailService = require('../service/email.service');
-const databaseService = require('../service/database.service');
-const logger = require('../service/logging.service');
+const EmailService = require('../service/email.service');
+const DatabaseService = require('../service/database.service');
+const Logger = require('../service/logging.service')('utility.controller');
 
 const router = express.Router();
 
 router.get('/health', (req, res) => {
     let template = `Up & Running at: ${Date.now()}`;
-    logger.log(template)
+    Logger.log(template)
     res.send(template)
 });
 
 router.post('/sendEmail', function (req, res) {
-    databaseService.store(req, (dbResponse) => {
+    DatabaseService.store(req, (dbResponse) => {
         if (dbResponse.success) {
-            logger.log('DB operation completed successfully.. sending Email');
-            emailService.sendEmail(req, res, emailCallback);
+            Logger.info('DB operation completed successfully.. sending Email');
+            EmailService.sendEmail(req, res, emailCallback);
         } else {
-            logger.log('Something not right' + dbResponse.message);
+            Logger.error('Something not right' + dbResponse.message);
             res.status(500).send(dbResponse.message);
         }
     });
@@ -26,10 +26,10 @@ router.post('/sendEmail', function (req, res) {
 
 function emailCallback(email, res) {
     if (email && email.success) {
-        logger.log('Email Sent');
+        Logger.info('Email Sent');
         res.status(200).json({status: "ok"})
     } else {
-        logger.log('Failed to send email');
+        Logger.error('Failed to send email');
         res.status(500).send(email.msg);
     }
     res.end(email)

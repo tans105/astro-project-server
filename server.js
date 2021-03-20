@@ -1,12 +1,12 @@
 const express = require('express');
-const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const port = process.env.PORT || 8000;
-const dbService = require('./src/app/service/database.service')
-const featureService = require('./src/app/service/feature.service')
-const logger = require('./src/app/service/logging.service');
+const DbService = require('./src/app/service/database.service')
+const FeatureService = require('./src/app/service/feature.service')
+const Logger = require('./src/app/service/logging.service')('server')
 
+const port = process.env.PORT || 8000;
+const app = express();
 app.use(cors());
 app.options('*', cors());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -15,14 +15,14 @@ app.use(bodyParser.raw());
 
 app.use('/api', require('./src/app/controller/utility.controller'));
 
-featureService.bootstrap();
-
-dbService.seed().then((res) => {
-    logger.log(res);
-}, (err) => {
-    logger.log(err);
-});
-
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`)
+    Logger.info(`Example app listening on port ${port}!`)
 });
+
+const bootstrap = () => {
+    FeatureService.populateFeatureFlags();
+    DbService.make();
+    DbService.seed();
+}
+
+bootstrap();

@@ -1,79 +1,72 @@
-const parseUtil = require('../utils/parse.util')
-const common = require('../utils/common')
-const {Client} = require('pg');
-const logger = require('../service/logging.service');
+const ParseUtil = require('../utils/parse.util');
+const Common = require('../utils/common')
 const _ = require('lodash');
+const {Sequelize, STRING, TEXT} = require('sequelize');
+const Logger = require('../service/logging.service')('db');
 
-const dbConfig = getDbConfig();
-const clientPayload = {
-    user: dbConfig.user,
-    host: dbConfig.host,
-    database: dbConfig.database,
-    port: dbConfig.port,
-    ssl: _.get(dbConfig, 'ssl', false)
+let sequelize;
+let Queries;
+
+const getDbConfig = () => {
+    const dbConfig = Common.config().db;
+    let clientPayload;
+
+    clientPayload = {
+        user: dbConfig.user,
+        host: dbConfig.host,
+        database: dbConfig.database,
+        port: dbConfig.port,
+        ssl: _.get(dbConfig, 'ssl', false)
+    }
+
+    if (dbConfig.hasOwnProperty('password')) {
+        clientPayload.passowrd = dbConfig.password
+    }
+    return clientPayload;
 }
 
-if (dbConfig.hasOwnProperty('password')) {
-    clientPayload.passowrd = dbConfig.password
+const storeQuery = async (data) => {
+    let query = ParseUtil.parse(data);
+    if (query.success) {
+        return await Queries.create({
+            email: query.email,
+            query: JSON.stringify(query),
+            createdAt: new Date()
+        });
+    }
 }
 
-const client = new Client(clientPayload);
-client.connect();
+const seedData = async () => {
+    Queries = sequelize.define('queries', {
+        email: {type: STRING},
+        query: {type: TEXT},
+    });
 
-function getDbConfig() {
-    const config = common.config();
-    return config.db;
+    return Queries.sync({force: false})
+}
+
+const makeConnection = () => {
+    const dbConfig = getDbConfig();
+    sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passowrd, {
+        host: dbConfig.host,
+        dialect: 'postgres',
+        operatorsAliases: false,
+
+        pool: {
+            max: 5,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+        },
+    });
+
+    sequelize.authenticate()
+        .then(() => Logger.info('Database Connection has been established successfully.'))
+        .catch(err => Logger.error('Unable to connect to the database:', err));
 }
 
 module.exports = {
-    storeQuery: (data) => {
-        return new Promise((resolve) => {
-            let response = {}
-            let query = parseUtil.parse(data);
-            if (query.success) {
-                const toBeInsertedQuery = `INSERT INTO queries (email, query, creation_dtm) VALUES ($1::text, $2::text, now())`;
-                client.query(toBeInsertedQuery, [query.email, JSON.stringify(query)], (err, res) => {
-                    if (err) {
-                        logger.log('Failed to insert query ', err.toString())
-                        response.success = false;
-                        response.error = err;
-                    } else {
-                        logger.log('Query insted successfully')
-                        response.success = true;
-                        response.message = res;
-                        // client.end();
-                    }
-
-                    resolve(response)
-                });
-            }
-        });
-    },
-    seedData: () => {
-        return new Promise((resolve) => {
-            let response = {};
-            const createQuery = `
-                            create TABLE IF NOT EXISTS queries (
-                                      id serial,
-                                      email character varying(100),
-                                      query text,
-                                      creation_dtm timestamp without time zone default now()
-                                    );
-            `;
-            client.query(createQuery, (err, res) => {
-                if (err) {
-                    logger.log('Failed to create table ' + err.toString());
-                    response.success = false;
-                    response.error = err;
-                } else {
-                    logger.log('Table created successfully');
-                    response.success = true;
-                    response.message = res;
-                    // client.end();
-                }
-
-                resolve(response)
-            });
-        })
-    }
+    storeQuery,
+    seedData,
+    makeConnection
 }

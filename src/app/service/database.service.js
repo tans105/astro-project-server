@@ -34,8 +34,13 @@ const seed = () => {
         .catch(err => Logger.error(err));
 }
 
+const isAuthenticated = () => {
+    return DB.isAuthenticated();
+}
+
 module.exports = {
     store,
     seed,
-    make
+    make,
+    isAuthenticated
 }

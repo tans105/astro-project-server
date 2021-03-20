@@ -11,6 +11,12 @@ router.get('/health', (req, res) => {
     res.send(template)
 });
 
+router.get('/db/health', (req, res) => {
+    DatabaseService.isAuthenticated()
+        .then(() => res.send('Database up and running'))
+        .catch(err => res.send(err));
+});
+
 router.post('/sendEmail', function (req, res) {
     DatabaseService.store(req, (dbResponse) => {
         if (dbResponse.success) {

@@ -59,14 +59,15 @@ const makeConnection = () => {
             idle: 10000
         },
     });
+}
 
-    sequelize.authenticate()
-        .then(() => Logger.info('Database Connection has been established successfully.'))
-        .catch(err => Logger.error('Unable to connect to the database:', err));
+const isAuthenticated = async () => {
+    return sequelize.authenticate();
 }
 
 module.exports = {
     storeQuery,
     seedData,
-    makeConnection
+    makeConnection,
+    isAuthenticated
 }

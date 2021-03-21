@@ -11,7 +11,9 @@ module.exports = {
                 sob: data['sob'],
                 tob: JSON.stringify(data['tob']),
                 fname: data['fname'],
-                questions: data['questions']
+                questions: data['questions'],
+                amount: data['amount'],
+                service: data['service']
             }
             obj.success = true;
         } catch (e) {

@@ -21,7 +21,9 @@ function getQueryTemplate(data) {
         pob,
         tob,
         fname,
-        questions
+        questions,
+        amount,
+        service
     } = parseUtil.parse(data);
 
     let quesTpl = '';
@@ -59,6 +61,10 @@ function getQueryTemplate(data) {
       
       <table>
         <tr>
+          <td>Service</td>
+          <td>${service}</td>
+        </tr>
+        <tr>
           <td>Full Name</td>
           <td>${fname}</td>
         </tr>
@@ -93,6 +99,10 @@ function getQueryTemplate(data) {
         <tr>
           <td>Questions</td>
           <td><ul>${quesTpl}</ul></td>
+        </tr>
+        <tr>
+          <td>Amount</td>
+          <td>${amount}</td>
         </tr>
       </table>
       

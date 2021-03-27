@@ -42,10 +42,15 @@ const getUser = (email) => {
     return DB.getUser(email);
 }
 
+const getQueries = () => {
+    return DB.getQueries();
+}
+
 module.exports = {
     store,
     seed,
     make,
     isAuthenticated,
-    getUser
+    getUser,
+    getQueries
 }

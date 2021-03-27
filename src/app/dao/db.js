@@ -78,10 +78,15 @@ const getUser = async (email) => {
     })
 }
 
+const getQueries = async () => {
+    return Queries.findAll()
+}
+
 module.exports = {
     storeQuery,
     seedData,
     makeConnection,
     isAuthenticated,
-    getUser
+    getUser,
+    getQueries
 }

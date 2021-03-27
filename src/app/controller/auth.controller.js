@@ -2,7 +2,6 @@ const express = require('express');
 const Logger = require('../service/logging.service')('auth.controller');
 const DatabaseService = require('../service/database.service');
 const jwt = require('jsonwebtoken');
-const expressJwt = require('express-jwt');
 const _ = require('lodash');
 const common = require('../utils/common')
 
@@ -19,7 +18,7 @@ router.post('/login', (req, res) => {
     let user = DatabaseService.getUser(loginPayload.user.email)
         .then(user => {
             if (_.has(user, 'dataValues')) {
-                let token = jwt.sign({userID: user.dataValues.email}, secret, {expiresIn: '24h'});
+                let token = jwt.sign({email: user.dataValues.email}, secret, {expiresIn: '24h'});
                 res.status(200).send({token});
             } else {
                 res.status(401).send('Unauthorized User');

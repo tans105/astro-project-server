@@ -6,6 +6,7 @@ const Logger = require('../service/logging.service')('db');
 
 let sequelize;
 let Queries;
+let Users;
 
 const getDbConfig = () => {
     const dbConfig = Common.config().db;
@@ -41,8 +42,14 @@ const seedData = async () => {
         email: {type: STRING},
         query: {type: TEXT},
     });
+    Users = sequelize.define('users', {
+        email: {type: STRING},
+        password: {type: STRING},
+        sessionId: {type: TEXT},
+    });
 
-    return Queries.sync({force: false})
+    await Queries.sync({force: false});
+    await Users.sync({force: false});
 }
 
 const makeConnection = () => {
@@ -65,9 +72,21 @@ const isAuthenticated = async () => {
     return sequelize.authenticate();
 }
 
+const getUser = async (email) => {
+    return Users.findOne({
+        where: {email}
+    })
+}
+
+const getQueries = async () => {
+    return Queries.findAll()
+}
+
 module.exports = {
     storeQuery,
     seedData,
     makeConnection,
-    isAuthenticated
+    isAuthenticated,
+    getUser,
+    getQueries
 }

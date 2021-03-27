@@ -1,9 +1,9 @@
 const nodemailer = require('nodemailer');
 const common = require('../utils/common')
-const templateService = require('./template.service')
+const TemplateService = require('./template.service')
 
 module.exports = {
-    sendEmail: function (req, res, cb) {
+    sendEmail: async function (req) {
         const config = common.config();
         let emailConfig = {
             email: ''
@@ -12,8 +12,7 @@ module.exports = {
         if (config) {
             emailConfig = config.email;
         } else {
-            cb({success: false, msg: 'Failed to send email: Configuration not found'}, res);
-            return;
+            throw new Error('Failed to send email: Configuration not found');
         }
 
         const transporter = nodemailer.createTransport({
@@ -25,7 +24,7 @@ module.exports = {
             }),
             data = req.body;
 
-        const emailPayload = templateService.getTemplate(data);
+        const emailPayload = TemplateService.getTemplate(data);
 
         const mailOptions = {
             from: emailConfig.from,
@@ -34,11 +33,11 @@ module.exports = {
             html: emailPayload.body
         };
 
-        transporter.sendMail(mailOptions, function (error, info) {
+        await transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-                cb({success: false, msg: 'Failed to send email: ' + error}, res);
+                throw new Error(error);
             } else {
-                cb({success: true, msg: 'Updated successfully: ' + info.message}, res);
+                return {success: true, msg: 'Updated successfully: ' + info.message};
             }
         });
     }

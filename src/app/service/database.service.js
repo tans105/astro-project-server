@@ -38,9 +38,14 @@ const isAuthenticated = () => {
     return DB.isAuthenticated();
 }
 
+const getUser = (email) => {
+    return DB.getUser(email);
+}
+
 module.exports = {
     store,
     seed,
     make,
-    isAuthenticated
+    isAuthenticated,
+    getUser
 }

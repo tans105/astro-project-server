@@ -19,9 +19,11 @@
   },
   "homepage": "https://github.com/tans105/astro-project-server#readme",
   "dependencies": {
-    "body-parser": "latest",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "nodemailer": "^6.4.11",
     "pg": "^8.5.1",

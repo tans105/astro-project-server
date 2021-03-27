@@ -13,7 +13,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
 
-app.use('/api', require('./src/app/controller/utility.controller'));
+//Registering Controller
+app.use('/util', require('./src/app/controller/utility.controller'));
+app.use('/auth', require('./src/app/controller/auth.controller'));
+app.use('/mail', require('./src/app/controller/email.controller'));
+
 
 app.listen(port, () => {
     Logger.info(`Example app listening on port ${port}!`)

@@ -57,18 +57,33 @@ const seedData = async () => {
 
 const makeConnection = () => {
     const dbConfig = getDbConfig();
-    sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passowrd, {
-        host: dbConfig.host,
-        dialect: 'postgres',
-        operatorsAliases: false,
 
-        pool: {
-            max: 5,
-            min: 0,
-            acquire: 30000,
-            idle: 10000
-        },
-    });
+    if (dbConfig.fromEnv) { //Take it from environment variables
+        sequelize = new Sequelize(process.env.DATABASE_URL, {
+            dialect: 'postgres',
+            operatorsAliases: false,
+
+            pool: {
+                max: 5,
+                min: 0,
+                acquire: 30000,
+                idle: 10000
+            }
+        });
+    } else {
+        sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passowrd, {
+            host: dbConfig.host,
+            dialect: 'postgres',
+            operatorsAliases: false,
+
+            pool: {
+                max: 5,
+                min: 0,
+                acquire: 30000,
+                idle: 10000
+            },
+        });
+    }
 }
 
 const isAuthenticated = async () => {
@@ -91,8 +106,8 @@ const getQueries = async () => {
 
 const updateStatus = async (id, status, updatedBy) => {
     Queries.update(
-        { status, updatedBy },
-        { where: { id } }
+        {status, updatedBy},
+        {where: {id}}
     );
 }
 

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/health', (req, res) => {
     let template = `Up & Running at: ${Date.now()}`;
-    Logger.log(template)
+    Logger.info(template)
     res.send(template)
 });
 

@@ -59,6 +59,7 @@ const makeConnection = () => {
     const dbConfig = getDbConfig();
 
     if (dbConfig.fromEnv) { //Take it from environment variables
+        Logger.info('Connecting to..'+process.env.DATABASE_URL)
         sequelize = new Sequelize(process.env.DATABASE_URL, {
             dialect: 'postgres',
             operatorsAliases: false,

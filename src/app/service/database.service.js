@@ -46,11 +46,16 @@ const getQueries = () => {
     return DB.getQueries();
 }
 
+const updateStatus = (id, status, updatedBy) => {
+    return DB.updateStatus(id, status, updatedBy);
+}
+
 module.exports = {
     store,
     seed,
     make,
     isAuthenticated,
     getUser,
-    getQueries
+    getQueries,
+    updateStatus
 }

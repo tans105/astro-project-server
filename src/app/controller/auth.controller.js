@@ -18,7 +18,7 @@ router.post('/login', (req, res) => {
     let user = DatabaseService.getUser(loginPayload.user.email)
         .then(user => {
             if (_.has(user, 'dataValues')) {
-                let token = jwt.sign({email: user.dataValues.email}, secret, {expiresIn: '24h'});
+                let token = jwt.sign({email: user.dataValues.email}, secret, {expiresIn: '72h'});
                 res.status(200).send({token});
             } else {
                 res.status(401).send('Unauthorized User');

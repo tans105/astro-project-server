@@ -7,6 +7,7 @@ const common = require('../utils/common')
 
 const router = express.Router();
 const secret = common.config().secret;
+let currentUser;
 
 const auth = (req, res, next) => {
     const token = _.get(req, 'headers.authorization', null);
@@ -20,6 +21,7 @@ const auth = (req, res, next) => {
                     res.status(401).send({isExpired: false, message: 'Invalid Token'})
                 }
             }
+            currentUser = decoded.email;
             next();
         });
     } else {
@@ -29,15 +31,32 @@ const auth = (req, res, next) => {
 
 router.get('/queries', auth, (req, res) => {
     DatabaseService.getQueries()
-        .then(queries => {
-            if (queries) {
-                queries.forEach(query => {
-                    if(query.question) query.question = JSON.parse(query.question);
+        .then(response => {
+            if (response) {
+                let queries = [];
+                response.forEach(value => {
+                    let dto = value.dataValues;
+                    dto.query = JSON.parse(value.query);
+                    if (dto.query.question) dto.query.question = JSON.parse(dto.query.question);
+                    queries.push(dto)
                 })
-                res.status(200).send(queries.map(query => JSON.parse(query.dataValues.query)))
+                res.status(200).send(queries)
             } else {
                 res.status(200).send([]);
             }
         }).catch(err => Logger.error(err))
 });
+
+router.post('/updateStatus', auth, (req, res) => {
+    const updatePayload = req.body;
+    const id = updatePayload.id;
+    const status = updatePayload.status;
+
+    DatabaseService.updateStatus(id, status, currentUser)
+        .then(response => {
+            Logger.info("Status Update Successful")
+            res.status(200).send(response)
+        }).catch(err => Logger.error(err))
+});
+
 module.exports = router;

@@ -32,7 +32,8 @@ const storeQuery = async (data) => {
         return await Queries.create({
             email: query.email,
             query: JSON.stringify(query),
-            createdAt: new Date()
+            createdAt: new Date(),
+            status: 'NEW'
         });
     }
 }
@@ -41,6 +42,8 @@ const seedData = async () => {
     Queries = sequelize.define('queries', {
         email: {type: STRING},
         query: {type: TEXT},
+        status: {type: STRING},
+        updatedBy: {type: STRING}
     });
     Users = sequelize.define('users', {
         email: {type: STRING},
@@ -79,7 +82,18 @@ const getUser = async (email) => {
 }
 
 const getQueries = async () => {
-    return Queries.findAll()
+    return Queries.findAll({
+        order: [
+            ['id', 'DESC']
+        ]
+    })
+}
+
+const updateStatus = async (id, status, updatedBy) => {
+    Queries.update(
+        { status, updatedBy },
+        { where: { id } }
+    );
 }
 
 module.exports = {
@@ -88,5 +102,6 @@ module.exports = {
     makeConnection,
     isAuthenticated,
     getUser,
-    getQueries
+    getQueries,
+    updateStatus
 }

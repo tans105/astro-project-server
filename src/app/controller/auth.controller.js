@@ -1,12 +1,40 @@
 const express = require('express');
-const Logger = require('../service/logging.service')('auth.controller');
-const DatabaseService = require('../service/database.service');
-const jwt = require('jsonwebtoken');
 const _ = require('lodash');
-const common = require('../utils/common')
+const Logger = require('../service/logging.service')('auth.controller');
+
+const {
+    authenticateUser,
+    authInterceptor,
+    registerUser,
+    getHashedPassword
+} = require('../service/auth.service');
 
 const router = express.Router();
-const secret = common.config().secret;
+
+router.post('/register', authInterceptor, (req, res) => {
+    const registerPayload = req.body;
+
+    if (!_.has(registerPayload, 'email') || !_.has(registerPayload, 'password')) {
+        res.status(422).send('Mandatory Params missing');
+    }
+
+    const hashedPassword = getHashedPassword(registerPayload.password)
+        .then((hash) => {
+            let user = {
+                email: registerPayload.email,
+                password: hash
+            }
+            registerUser(user)
+                .then((dbRes) => {
+                    let user = _.get(dbRes, 'dataValues')
+                    res.status(200).send({user});
+                })
+                .catch(err => {
+                    Logger.error('Something went wrong. ' + err)
+                    res.status(500).send(err)
+                })
+        })
+});
 
 router.post('/login', (req, res) => {
     const loginPayload = req.body;
@@ -15,15 +43,13 @@ router.post('/login', (req, res) => {
         res.status(422).send('Email missing');
     }
 
-    let user = DatabaseService.getUser(loginPayload.user.email)
-        .then(user => {
-            if (_.has(user, 'dataValues')) {
-                let token = jwt.sign({email: user.dataValues.email}, secret, {expiresIn: '72h'});
-                res.status(200).send({token});
-            } else {
-                res.status(401).send('Unauthorized User');
-            }
-        }).catch(err => res.status(500).send(err))
+    authenticateUser(loginPayload).then(({success, message, token}) => {
+        if (!success) {
+            res.status(401).send({message});
+        } else {
+            res.status(200).send({token});
+        }
+    });
 });
 
 module.exports = router;

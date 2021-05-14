@@ -1,35 +1,12 @@
 const express = require('express');
-const DatabaseService = require('../service/database.service');
-const jwt = require('jsonwebtoken');
+
 const Logger = require('../service/logging.service')('queries.controller');
-const _ = require('lodash')
-const common = require('../utils/common')
+const DatabaseService = require('../service/database.service');
+const {authInterceptor, getCurrentUser} = require('../service/auth.service')
 
 const router = express.Router();
-const secret = common.config().secret;
-let currentUser;
 
-const auth = (req, res, next) => {
-    const token = _.get(req, 'headers.authorization', null);
-
-    if (token) {
-        jwt.verify(token, secret, function (err, decoded) {
-            if (err) {
-                if (err.name === 'TokenExpiredError') {
-                    res.status(401).send({isExpired: true, message: 'Token Expired'})
-                } else {
-                    res.status(401).send({isExpired: false, message: 'Invalid Token'})
-                }
-            }
-            currentUser = decoded.email;
-            next();
-        });
-    } else {
-        res.status(401).send({isExpired: false, message: 'No Token Found'})
-    }
-};
-
-router.get('/queries', auth, (req, res) => {
+router.get('/queries', authInterceptor, (req, res) => {
     DatabaseService.getQueries()
         .then(response => {
             if (response) {
@@ -47,12 +24,12 @@ router.get('/queries', auth, (req, res) => {
         }).catch(err => Logger.error(err))
 });
 
-router.post('/updateStatus', auth, (req, res) => {
+router.post('/updateStatus', authInterceptor, (req, res) => {
     const updatePayload = req.body;
     const id = updatePayload.id;
     const status = updatePayload.status;
 
-    DatabaseService.updateStatus(id, status, currentUser)
+    DatabaseService.updateStatus(id, status, getCurrentUser())
         .then(response => {
             Logger.info("Status Update Successful")
             res.status(200).send(response)

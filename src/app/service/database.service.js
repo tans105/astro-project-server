@@ -38,7 +38,7 @@ const isAuthenticated = () => {
     return DB.isAuthenticated();
 }
 
-const getUser = (email) => {
+const getUser = async (email) => {
     return DB.getUser(email);
 }
 
@@ -50,6 +50,10 @@ const updateStatus = (id, status, updatedBy) => {
     return DB.updateStatus(id, status, updatedBy);
 }
 
+const createUser = async (user) => {
+    return DB.createUser(user);
+}
+
 module.exports = {
     store,
     seed,
@@ -57,5 +61,6 @@ module.exports = {
     isAuthenticated,
     getUser,
     getQueries,
-    updateStatus
+    updateStatus,
+    createUser
 }

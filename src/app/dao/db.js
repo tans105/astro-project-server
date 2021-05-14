@@ -111,6 +111,13 @@ const updateStatus = async (id, status, updatedBy) => {
     );
 }
 
+const createUser = async (user) => {
+    return await Users.create({
+        email: user.email,
+        password: user.password,
+    });
+}
+
 module.exports = {
     storeQuery,
     seedData,
@@ -118,5 +125,6 @@ module.exports = {
     isAuthenticated,
     getUser,
     getQueries,
-    updateStatus
+    updateStatus,
+    createUser
 }

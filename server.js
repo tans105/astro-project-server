@@ -1,12 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+
 const DbService = require('./src/app/service/database.service')
 const FeatureService = require('./src/app/service/feature.service')
 const Logger = require('./src/app/service/logging.service')('server')
 
 const port = process.env.PORT || 8000;
 const app = express();
+
 app.use(cors());
 app.options('*', cors());
 app.use(bodyParser.urlencoded({extended: true}));

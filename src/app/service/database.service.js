@@ -1,6 +1,7 @@
 const DB = require('../dao/db');
 const FeatureService = require('../service/feature.service');
 const Logger = require('../service/logging.service')('database.service')
+const _ = require('lodash');
 
 const make = () => DB.makeConnection();
 
@@ -51,7 +52,23 @@ const updateStatus = (id, status, updatedBy) => {
 }
 
 const createUser = async (user) => {
-    return DB.createUser(user);
+    return getUser(user.email)
+        .then(dbRes => {
+            if(!dbRes) {
+                return DB.createUser(user);
+            } else {
+                return new Promise(resolve => {
+                    Logger.debug('User already present. Skipping');
+                    resolve(dbRes)
+                })
+            }
+        })
+        .catch(err => {
+            return new Promise((resolve, reject) => {
+                reject(null);
+                Logger.error(err)
+            })
+        });
 }
 
 module.exports = {

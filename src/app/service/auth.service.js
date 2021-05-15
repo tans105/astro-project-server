@@ -18,18 +18,37 @@ const authInterceptor = (req, res, next) => {
         jwt.verify(token, secret, function (err, decoded) {
             if (err) {
                 if (err.name === 'TokenExpiredError') {
+                    Logger.info('Token Expired')
                     res.status(401).send({isExpired: true, message: 'Token Expired'})
                 } else {
+                    Logger.info('Invalid Token')
                     res.status(401).send({isExpired: false, message: 'Invalid Token'})
                 }
             }
-            currentUser = decoded.email;
-            next();
+            validateUser(decoded.email)
+                .then(validateResponse => {
+                    if (!_.isNil(validateResponse)) {
+                        currentUser = decoded.email;
+                        next();
+                    } else {
+                        Logger.error('User does not exists ' + decoded.email)
+                        res.status(401).send({isExpired: false, message: 'User does not exists'})
+                    }
+                })
+                .catch(validateResponse => {
+                    Logger.error(validateResponse)
+                    res.status(401).send({isExpired: false, message: validateResponse})
+                })
         });
     } else {
+        Logger.info('No Token Found')
         res.status(401).send({isExpired: false, message: 'No Token Found'})
     }
 };
+
+const validateUser = async (email) => {
+    return DatabaseService.getUser(email)
+}
 
 const getCurrentUser = () => {
     return currentUser;
@@ -83,7 +102,7 @@ const authenticateUser = async (loginPayload) => {
                     })
             }
         }).catch(err => {
-            return {success: false, message: 'Internal Server Error'}
+            return {success: false, message: err}
         })
 }
 

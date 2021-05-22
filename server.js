@@ -28,10 +28,13 @@ app.listen(port, () => {
 });
 
 const bootstrap = () => {
-    Common.setupConfiguration();
-    FeatureService.populateFeatureFlags();
-    DbService.make();
-    DbService.seed();
+    Common.setupConfiguration()
+
+    setTimeout(() => {
+        FeatureService.populateFeatureFlags();
+        DbService.make();
+        DbService.seed();
+    }, 1000)
 }
 
 bootstrap();

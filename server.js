@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 
 const DbService = require('./src/app/service/database.service')
 const FeatureService = require('./src/app/service/feature.service')
+const Common = require('./src/app/utils/common')
 const Logger = require('./src/app/service/logging.service')('server')
 
 const port = process.env.PORT || 8000;
@@ -27,6 +28,7 @@ app.listen(port, () => {
 });
 
 const bootstrap = () => {
+    Common.setupConfiguration();
     FeatureService.populateFeatureFlags();
     DbService.make();
     DbService.seed();

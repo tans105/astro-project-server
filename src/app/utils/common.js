@@ -1,6 +1,12 @@
 const env = require('../resources/env.json');
+let config = {};
 
 exports.config = () => {
-  const node_env = process.env.ASTRO_NODE_ENV || 'development';
-  return env[node_env];
+  return config;
 };
+
+
+exports.setupConfiguration = () => {
+  const runtime = process.env.ASTRO_NODE_ENV || 'development';
+  config = env[runtime];
+}

@@ -8,6 +8,8 @@ exports.config = () => {
 
 exports.setupConfiguration = () => {
     const runtime = process.env.ASTRO_NODE_ENV || 'development';
-    config = env[runtime];
-    Logger.info('Runtime Configuration', config)
+    setTimeout(()=> {
+        config = env[runtime];
+        Logger.info('Runtime Configuration', config)
+    }, 2000)
 }

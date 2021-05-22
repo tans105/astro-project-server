@@ -7,12 +7,12 @@ const DatabaseService = require('./database.service');
 const Logger = require('./logging.service')('auth.service');
 
 const common = require('../utils/common')
-const secret = common.config().secret;
 
 let currentUser;
 
 const authInterceptor = (req, res, next) => {
     const token = _.get(req, 'headers.authorization', null);
+    const secret = common.config().secret;
 
     if (token) {
         jwt.verify(token, secret, function (err, decoded) {
@@ -55,6 +55,7 @@ const getCurrentUser = () => {
 }
 
 const getLoginToken = (email, expiresIn) => {
+    const secret = common.config().secret;
     return jwt.sign({email: email}, secret, {expiresIn: expiresIn});
 }
 

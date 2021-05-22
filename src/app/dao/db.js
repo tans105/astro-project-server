@@ -10,19 +10,22 @@ let Users;
 
 const getDbConfig = () => {
     const dbConfig = Common.config().db;
+
     let clientPayload;
 
     clientPayload = {
-        user: dbConfig.user,
-        host: dbConfig.host,
-        database: dbConfig.database,
-        port: dbConfig.port,
+        user: dbConfig.user || '',
+        host: dbConfig.host || '',
+        database: dbConfig.database || '',
+        port: dbConfig.port || '5432',
         ssl: _.get(dbConfig, 'ssl', false)
     }
 
     if (dbConfig.hasOwnProperty('pass')) {
         clientPayload.password = dbConfig.pass
     }
+
+    clientPayload.fromEnv = dbConfig.fromEnv
     return clientPayload;
 }
 

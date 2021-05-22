@@ -1,0 +1,15 @@
+---
+application:
+  name: "astro-project-server"
+  project: "astro-project-server"
+  organization: "QoveryCommunity"
+databases:
+- type: "POSTGRESQL"
+  name: "mb"
+  version: "11"
+routers:
+- name: "main-astro-project-server"
+  routes:
+  - application_name: "astro-project-server"
+    paths:
+    - "/*"

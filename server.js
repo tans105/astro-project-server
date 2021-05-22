@@ -28,13 +28,15 @@ app.listen(port, () => {
 });
 
 const bootstrap = () => {
+    Logger.info('Loading configuration ', new Date().toISOString())
     Common.setupConfiguration()
 
     setTimeout(() => {
+        Logger.info('Seeding starts now ', new Date().toISOString())
         FeatureService.populateFeatureFlags();
         DbService.make();
         DbService.seed();
-    }, 1000)
+    }, 5000)
 }
 
 bootstrap();

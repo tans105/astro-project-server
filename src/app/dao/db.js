@@ -20,8 +20,8 @@ const getDbConfig = () => {
         ssl: _.get(dbConfig, 'ssl', false)
     }
 
-    if (dbConfig.hasOwnProperty('password')) {
-        clientPayload.passowrd = dbConfig.password
+    if (dbConfig.hasOwnProperty('pass')) {
+        clientPayload.password = dbConfig.pass
     }
     return clientPayload;
 }
@@ -71,7 +71,7 @@ const makeConnection = () => {
             }
         });
     } else {
-        sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passowrd, {
+        sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
             host: dbConfig.host,
             dialect: 'postgres',
             operatorsAliases: false,

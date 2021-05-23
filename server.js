@@ -36,7 +36,7 @@ const bootstrap = () => {
         FeatureService.populateFeatureFlags();
         DbService.make();
         DbService.seed();
-    }, 2000)
+    }, 1000)
 }
 
 bootstrap();

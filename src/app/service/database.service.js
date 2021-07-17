@@ -1,5 +1,6 @@
 const DB = require('../dao/db');
 const FeatureService = require('../service/feature.service');
+const Common = require('../utils/common')
 const Logger = require('../service/logging.service')('database.service')
 const _ = require('lodash');
 
@@ -31,7 +32,13 @@ const seed = () => {
     }
 
     DB.seedData()
-        .then(() => Logger.info('Table created Successfully'))
+        .then(() => {
+            DB.getConfigurations().then(configurations => {
+                const secret = configurations.filter(config => config.dataValues.key === 'secret')
+                Common.setSecret(secret[0].dataValues)
+            });
+            Logger.info('Table created Successfully')
+        })
         .catch(err => Logger.error(err));
 }
 
@@ -79,5 +86,5 @@ module.exports = {
     getUser,
     getQueries,
     updateStatus,
-    createUser
+    createUser,
 }

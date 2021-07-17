@@ -17,7 +17,7 @@ exports.setupConfiguration = () => {
     Logger.info('Runtime Config', config)
 }
 
-exports.getSecrets = () => {
+exports.getSecret = () => {
     return secret;
 }
 

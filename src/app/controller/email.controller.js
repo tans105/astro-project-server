@@ -9,10 +9,24 @@ router.post('/sendEmail', function (req, res) {
     DatabaseService.store(req, (dbResponse) => {
         if (dbResponse.success) {
             Logger.info('DB operation completed successfully.. sending Email');
-            EmailService.sendEmail(req).then(() => {
-                Logger.info('Email Sent');
-                res.status(200).json({status: "ok"})
-            }).catch(err => {
+
+            const emailPayload = req.body;
+            emailPayload.uuid = dbResponse.id || -1;
+            const promises = [EmailService.sendEmail(emailPayload)];
+
+            if (emailPayload.emailType !== 'feedback') {
+                const receiptEmailPayload = {
+                    emailType: 'receipt',
+                    uuid: dbResponse.id
+                };
+                promises.push(EmailService.sendEmail(receiptEmailPayload))
+            }
+
+            Promise.all(promises)
+                .then(() => {
+                    Logger.info('Email Sent');
+                    res.status(200).json({status: "ok"})
+                }).catch(err => {
                 Logger.error('Failed to send email');
                 res.status(500).send(err);
             });

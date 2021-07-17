@@ -1,43 +1,65 @@
 const parseUtil = require('../utils/parse.util');
 
 module.exports = {
-  getTemplate: (data) => {
-    const type = data['emailType'];
-    if (type) {
-      return (type === 'feedback') ? getFeedbackTemplate(data) : getQueryTemplate(data)
-    } else {
-      return null;
+    getTemplate: (data) => {
+        const type = data['emailType'];
+
+        switch (type) {
+            case 'feedback':
+                return getFeedbackTemplate(data)
+            case 'query':
+                return getQueryTemplate(data)
+            case 'receipt':
+                return getReceiptTemplate(data)
+            default:
+                return null
+        }
     }
-  }
+}
+
+function getReceiptTemplate(data) {
+    const subject = 'MangalamBhav:: Query posted successfully!'
+    let body = `
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <p>Thank you for posting to us. We will get back to you as soon as possible.</p>
+      <br>
+      <p>Here is your reference number for any future communications from us</p> 
+      <pre>${data.uuid}</pre>
+    </body>
+    </html>
+    `;
+    return {subject, body}
 }
 
 function getQueryTemplate(data) {
-  const {
-    email,
-    primary,
-    secondary,
-    sob,
-    dob,
-    pob,
-    tob,
-    fname,
-    questions,
-    amount,
-    service,
-    sob_girl,
-    dob_girl,
-    pob_girl,
-    tob_girl,
-    fname_girl,
-  } = parseUtil.parse(data);
+    const {
+        email,
+        primary,
+        secondary,
+        sob,
+        dob,
+        pob,
+        tob,
+        fname,
+        questions,
+        amount,
+        service,
+        sob_girl,
+        dob_girl,
+        pob_girl,
+        tob_girl,
+        fname_girl,
+    } = parseUtil.parse(data);
 
-  let quesTpl = '';
-  questions.forEach((question) => {
-    quesTpl += `<li>${JSON.stringify(question)}</li>`
-  });
+    let quesTpl = '';
+    questions.forEach((question) => {
+        quesTpl += `<li>${JSON.stringify(question)}</li>`
+    });
 
-  let subject = `MangalamBhav - New Query - ${service} - ${email} - ${primary}`;
-  let body = `
+    const subject = `MangalamBhav - New Query - ${service} - ${email} - ${primary}`;
+    let body = `
     <!DOCTYPE html>
     <html>
        <head>
@@ -77,6 +99,10 @@ function getQueryTemplate(data) {
           <h2>Query</h2>
           <br>
           <table>
+             <tr>
+                <td>UUID</td>
+                <td>${data.uuid}</td>
+             </tr>
              <tr>
                 <td>Service</td>
                 <td>${service}</td>
@@ -126,8 +152,8 @@ function getQueryTemplate(data) {
           </table>
     `;
 
-  if (service === 'kundli') {
-    body += `
+    if (service === 'kundli') {
+        body += `
       <h3>Person 2 Details</h3>
       <table class="data-table">
         <tr>
@@ -151,10 +177,10 @@ function getQueryTemplate(data) {
             <td>${tob_girl}</td>
          </tr>
       </table>   `
-  }
+    }
 
-  if (service === 'custom') {
-    body += `
+    if (service === 'custom') {
+        body += `
       <h3>Custom Query</h3>
       <table class="data-table">
          <tr>
@@ -165,23 +191,23 @@ function getQueryTemplate(data) {
          </tr>
       </table>
         `
-  }
+    }
 
-  body += `
+    body += `
     </body>
     </html>
     `
 
-  return {subject, body};
+    return {subject, body};
 }
 
 function getFeedbackTemplate(data) {
-  const email = data['email'],
-    name = data['name'],
-    feedback = data['feedback'];
+    const email = data['email'],
+        name = data['name'],
+        feedback = data['feedback'];
 
-  let subject = 'Feedback Recieved !'
-  let body = `
+    const subject = 'Feedback Recieved !'
+    let body = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -227,5 +253,5 @@ function getFeedbackTemplate(data) {
     </html>
     `;
 
-  return {subject, body};
+    return {subject, body};
 }

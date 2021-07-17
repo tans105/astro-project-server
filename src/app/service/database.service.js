@@ -17,7 +17,7 @@ const store = (req, cb) => {
         DB.storeQuery(data)
             .then((query) => {
                 Logger.info("Query create auto-generated ID:", query.id);
-                cb({success: true})
+                cb({success: true, id: query.id})
             })
             .catch((err) => Logger.error(err));
     } else {
@@ -54,7 +54,7 @@ const updateStatus = (id, status, updatedBy) => {
 const createUser = async (user) => {
     return getUser(user.email)
         .then(dbRes => {
-            if(!dbRes) {
+            if (!dbRes) {
                 return DB.createUser(user);
             } else {
                 return new Promise(resolve => {

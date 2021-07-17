@@ -12,7 +12,7 @@ let currentUser;
 
 const authInterceptor = (req, res, next) => {
     const token = _.get(req, 'headers.authorization', null);
-    const secret = common.config().secret;
+    const secret = common.getSecret();
 
     if (token) {
         jwt.verify(token, secret, function (err, decoded) {
@@ -55,7 +55,7 @@ const getCurrentUser = () => {
 }
 
 const getLoginToken = (email, expiresIn) => {
-    const secret = common.config().secret;
+    const secret = common.getSecret();
     return jwt.sign({email: email}, secret, {expiresIn: expiresIn});
 }
 

@@ -7,6 +7,7 @@ const Logger = require('../service/logging.service')('db');
 let sequelize;
 let Queries;
 let Users;
+let Configurations;
 
 const getDbConfig = () => {
     const dbConfig = Common.config().db;
@@ -53,9 +54,14 @@ const seedData = async () => {
         password: {type: STRING},
         sessionId: {type: TEXT},
     });
+    Configurations = sequelize.define('configurations', {
+        key: {type: STRING},
+        value: {type: STRING},
+    });
 
     await Queries.sync({force: false});
     await Users.sync({force: false});
+    await Configurations.sync({force: false});
 }
 
 const makeConnection = () => {
@@ -121,6 +127,10 @@ const createUser = async (user) => {
     });
 }
 
+const getConfigurations = async () => {
+    return await Configurations.findAll();
+}
+
 module.exports = {
     storeQuery,
     seedData,
@@ -129,5 +139,6 @@ module.exports = {
     getUser,
     getQueries,
     updateStatus,
-    createUser
+    createUser,
+    getConfigurations,
 }

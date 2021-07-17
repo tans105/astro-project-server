@@ -18,19 +18,176 @@ module.exports = {
 }
 
 function getReceiptTemplate(data) {
-    const subject = 'MangalamBhav:: Query posted successfully!'
+    const {
+        email,
+        primary,
+        secondary,
+        sob,
+        dob,
+        pob,
+        tob,
+        fname,
+        questions,
+        amount,
+        service,
+        sob_girl,
+        dob_girl,
+        pob_girl,
+        tob_girl,
+        fname_girl,
+    } = parseUtil.parse(data);
+
+    let quesTpl = '';
+    questions.forEach((question) => {
+        quesTpl += `<li>${JSON.stringify(question)}</li>`
+    });
+
+    const subject = `MangalamBhav:: Query posted successfully!`;
     let body = `
     <!DOCTYPE html>
     <html>
-    <body>
-      <p>Thank you for posting to us. We will get back to you as soon as possible.</p>
-      <br>
-      <p>Here is your reference number for any future communications from us</p> 
-      <pre>${data.uuid}</pre>
+       <head>
+          <style>
+             table {
+               font-family: arial, sans-serif;
+               border-collapse: collapse;
+               width: 100%;
+               margin: 20px 0;
+             }
+    
+             td, th {
+               border: 1px solid #dddddd;
+               text-align: left;
+               padding: 8px;
+               width: 50%
+             }
+    
+             .data-table tr {
+               background-color: #dddddd;
+               border-top: 2px solid white;
+               border-bottom: 2px solid white;
+             }
+    
+             .data-table td {
+               border: 2px solid white;
+               padding: 8px;
+             }
+    
+             ul {
+               padding: 0;
+               margin: 0;
+             }
+          </style>
+       </head>
+       <body>
+          <h4>Thank you for posting to us.</h4> 
+          <p>Here is the summary of the query.</p>
+          <br>
+          <table>
+             <tr>
+                <td>Reference Number</td>
+                <td><strong>${data.uuid}</strong></td>
+             </tr>
+             <tr>
+                <td>Service</td>
+                <td><strong>${service}</strong></td>
+             </tr>
+             <tr>
+                <td>Amount</td>
+                <td>${amount}</td>
+             </tr>
+          </table>
+          <table class="data-table">
+             <tr>
+                <td>Email</td>
+                <td>${email}</td>
+             </tr>
+             <tr>
+                <td>Primary Contact</td>
+                <td>${primary}</td>
+             </tr>
+             <tr>
+                <td>Secondary Contact</td>
+                <td>${secondary}</td>
+             </tr>
+          </table>
+          
+          <h3>Person 1 Details</h3>
+          <table class="data-table">
+            <tr>
+                <td>Full Name</td>
+                <td>${fname}</td>
+             </tr>
+             <tr>
+                <td>City of Birth</td>
+                <td>${pob}</td>
+             </tr>
+             <tr>
+                <td>State of Birth</td>
+                <td>${sob}</td>
+             </tr>
+             <tr>
+                <td>Date of Birth</td>
+                <td>${dob}</td>
+             </tr>
+             <tr>
+                <td>Time of Birth</td>
+                <td>${tob}</td>
+             </tr>
+          </table>
+    `;
+
+    if (service === 'kundli') {
+        body += `
+      <h3>Person 2 Details</h3>
+      <table class="data-table">
+        <tr>
+            <td>Full Name</td>
+            <td>${fname_girl}</td>
+         </tr>
+         <tr>
+            <td>City of Birth</td>
+            <td>${pob_girl}</td>
+         </tr>
+         <tr>
+            <td>State of Birth</td>
+            <td>${sob_girl}</td>
+         </tr>
+         <tr>
+            <td>Date of Birth</td>
+            <td>${dob_girl}</td>
+         </tr>
+         <tr>
+            <td>Time of Birth</td>
+            <td>${tob_girl}</td>
+         </tr>
+      </table>   `
+    }
+
+    if (service === 'custom') {
+        body += `
+      <h3>Custom Query</h3>
+      <table class="data-table">
+         <tr>
+            <td>Questions</td>
+            <td>
+               <ul>${quesTpl}</ul>
+            </td>
+         </tr>
+      </table>
+      <br>  
+      `
+    }
+
+    body += `
+    <p>For any query, please feel free to <a href="mailto:mangalambhav@yahoo.com">Reach Us</a></p>
+    <br>
+    <p><strong>Please do not reply to this email.</strong></p>
     </body>
     </html>
-    `;
-    return {subject, body}
+    `
+
+    return {subject, body};
 }
 
 function getQueryTemplate(data) {

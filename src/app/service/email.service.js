@@ -28,7 +28,7 @@ module.exports = {
         if(emailPayload) {
             const mailOptions = {
                 from: emailConfig.from,
-                to: emailConfig.to,
+                to: payload.sendToCustomer ? payload.email : emailConfig.to,
                 subject: emailPayload.subject,
                 html: emailPayload.body
             };

@@ -16,8 +16,9 @@ router.post('/sendEmail', function (req, res) {
 
             if (emailPayload.emailType !== 'feedback') {
                 const receiptEmailPayload = {
+                    ...emailPayload,
                     emailType: 'receipt',
-                    uuid: dbResponse.id
+                    sendToCustomer: true,
                 };
                 promises.push(EmailService.sendEmail(receiptEmailPayload))
             }

@@ -3,6 +3,8 @@
 <p>Web server for <a href="https://mangalambhav.in">MangalamBhav</a>. </p>
 
 Responsible for all the heavy lifting behind the scene 
+- User Authentication (Registration, Validating, Interception) 
+- Encryption and Encodings 
 - Process User queries of all kind
 - Dispach email of confirmation, receipt, feedbacks
 - Seed the database with the configurations and schemas

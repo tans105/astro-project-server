@@ -24,7 +24,7 @@ router.post('/sendEmail', function (req, res) {
             }
 
             Promise.all(promises)
-                .then(() => {
+                .then(emailResponse => {
                     Logger.info('Email Sent');
                     res.status(200).json({status: "ok"})
                 }).catch(err => {

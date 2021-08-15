@@ -21,6 +21,7 @@ app.use('/util', require('./src/app/controller/utility.controller'));
 app.use('/auth', require('./src/app/controller/auth.controller'));
 app.use('/mail', require('./src/app/controller/email.controller'));
 app.use('/api', require('./src/app/controller/queries.controller'));
+app.use('/order', require('./src/app/controller/order.controller'));
 
 
 app.listen(port, () => {

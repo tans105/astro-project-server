@@ -61,7 +61,8 @@ router.post('/verify', function (req, res) {
                 Logger.info('Payment updated ' + uuid);
                 res.status(200).json({
                     uuid,
-                    status: 'SUCCESS'
+                    status: 'SUCCESS',
+                    gateway,
                 })
             })
             .catch(err => res.status(500).send(err));

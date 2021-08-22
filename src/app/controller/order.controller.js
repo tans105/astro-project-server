@@ -10,9 +10,20 @@ const router = express.Router();
 router.post('/make', function (req, res) {
     DatabaseService.store(req, (dbResponse) => {
         Logger.info('DB operation completed successfully.. initiating payment');
-        let instance = common.gatewayInstance();
-        let options = {
-            amount: parseInt(req.body.amount) * 100,
+        const instance = common.gatewayInstance();
+        const {amount, paymentEnabled} = req.body;
+
+        if(!paymentEnabled) {
+            Logger.info('Success [Without payment]' + dbResponse.id);
+            res.status(200).json({
+                uuid: dbResponse.id,
+                status: "ok",
+            })
+            return;
+        }
+
+        const options = {
+            amount: parseInt(amount) * 100,
             currency: 'INR',
             receipt: dbResponse.id,
             payment_capture: 0,

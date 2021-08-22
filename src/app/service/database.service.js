@@ -78,8 +78,18 @@ const createUser = async (user) => {
         });
 }
 
+const storeTransaction = async (uuid) => {
+    return DB.storeTransaction(uuid)
+}
+
+const updateTransaction = async (uuid, status) => {
+    return DB.updateTransaction(uuid, status)
+}
+
 module.exports = {
     store,
+    storeTransaction,
+    updateTransaction,
     seed,
     make,
     isAuthenticated,

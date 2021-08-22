@@ -1,13 +1,14 @@
 const ParseUtil = require('../utils/parse.util');
 const Common = require('../utils/common')
 const _ = require('lodash');
-const {Sequelize, STRING, TEXT} = require('sequelize');
+const {Sequelize, STRING, TEXT, DATE} = require('sequelize');
 const Logger = require('../service/logging.service')('db');
 
 let sequelize;
 let Queries;
 let Users;
 let Configurations;
+let Transactions;
 
 const getDbConfig = () => {
     const dbConfig = Common.config().db;
@@ -42,6 +43,22 @@ const storeQuery = async (data) => {
     }
 }
 
+const storeTransaction = async (uuid) => {
+    return await Transactions.create({
+        uuid,
+        status: 'PENDING',
+        creationDtm: new Date(),
+        updationDtm: new Date(),
+    });
+}
+
+const updateTransaction = async (uuid, status) => {
+    return Transactions.update(
+        {status, updationDtm: new Date()},
+        {where: {uuid}}
+    );
+}
+
 const seedData = async () => {
     Queries = sequelize.define('queries', {
         email: {type: STRING},
@@ -58,10 +75,17 @@ const seedData = async () => {
         key: {type: STRING},
         value: {type: STRING},
     });
+    Transactions = sequelize.define('transactions', {
+        uuid: {type: STRING},
+        status: {type: STRING},
+        creationDtm: {type: DATE},
+        updationDtm: {type: DATE}
+    });
 
     await Queries.sync({force: false});
     await Users.sync({force: false});
     await Configurations.sync({force: false});
+    await Transactions.sync({force: false});
 }
 
 const makeConnection = () => {
@@ -141,4 +165,6 @@ module.exports = {
     updateStatus,
     createUser,
     getConfigurations,
+    storeTransaction,
+    updateTransaction,
 }

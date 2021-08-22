@@ -34,8 +34,11 @@ const seed = () => {
     DB.seedData()
         .then(() => {
             DB.getConfigurations().then(configurations => {
-                const secret = configurations.filter(config => config.dataValues.key === 'secret')
-                Common.setSecret(secret[0].dataValues)
+                const dbConfig = {};
+                configurations.forEach(config => {
+                    dbConfig[config.key] = config.value;
+                })
+                Common.setDbConfig(dbConfig)
             });
             Logger.info('Table created Successfully')
         })

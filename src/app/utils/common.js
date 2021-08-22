@@ -5,33 +5,26 @@ const Logger = require('../service/logging.service')('common');
 const Razorpay = require('razorpay');
 
 let config = null;
-let secret = null;
-let gatewayInstance;
-
-exports.config = () => {
-    return config;
-};
+let dbConfig = null;
+let gatewayInstance = null;
 
 exports.setupConfiguration = () => {
     const runtime = process.env.ASTRO_NODE_ENV || 'development';
     config = env[runtime];
     Logger.info('Runtime Config', config)
-    setupPayment(config);
 }
 
-const setupPayment = (config) => {
-    const paymentConfig = _.get(config, 'payment', {})
-    gatewayInstance = new Razorpay(paymentConfig);
+const setupPayment = () => {
+    gatewayInstance = new Razorpay(JSON.parse(dbConfig['payment']));
 }
 
-exports.getSecret = () => {
-    return secret;
-}
+exports.config = () => config;
+exports.dbConfig = () => dbConfig;
+exports.getDbConfig = key => dbConfig[key];
+exports.getSecret = () => dbConfig['secret'];
+exports.gatewayInstance = () => gatewayInstance;
 
-exports.setSecret = (sec) => {
-    secret = sec.value;
-}
-
-exports.gatewayInstance = () => {
-    return gatewayInstance;
-}
+exports.setDbConfig = config => {
+    dbConfig = config;
+    setupPayment();
+};

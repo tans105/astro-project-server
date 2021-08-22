@@ -89,7 +89,8 @@ router.post('/verify', function (req, res) {
 
 const verifyPayment = (order_id, paymentResponse) => {
     Logger.info('Verifying payment for ' + order_id);
-    const secret = _.get(common.config(), 'payment.key_secret', null);
+    const payment = JSON.parse(common.getDbConfig('payment'));
+    const secret = _.get(payment, 'key_secret', null);
     if (secret) {
         let generatedSignature = crypto.createHmac('sha256', secret).update(order_id + "|" + paymentResponse.razorpay_payment_id).digest('hex')
         return generatedSignature === paymentResponse.razorpay_signature;

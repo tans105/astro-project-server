@@ -58,7 +58,7 @@ router.post('/verify', function (req, res) {
     if (paymentSuccess) {
         DatabaseService.updateTransaction(uuid, 'SUCCESS')
             .then(() => {
-                Logger.info('Payment updated ' + uuid);
+                Logger.info('Payment success updated ' + uuid);
                 res.status(200).json({
                     uuid,
                     status: 'SUCCESS',
@@ -67,7 +67,11 @@ router.post('/verify', function (req, res) {
             })
             .catch(err => res.status(500).send(err));
     } else {
-        res.status(500).send('Payment information is not right ')
+        DatabaseService.updateTransaction(uuid, 'FAILURE')
+            .then(()=> {
+                Logger.info('Payment fail updated ' + uuid);
+                res.status(500).send('Payment information is not right ')
+            })
     }
 });
 
